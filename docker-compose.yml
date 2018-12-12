@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  web:
+    image: nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    depends_on:
+      - app
+    ports:
+      - 80:80
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: komeia
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  app:
+    build: .
+    volumes:
+      - ./rails_app:/rails_app
+    environment:
+      - RAILS_ENV=${RAILS_ENV}
+    depends_on:
+    - db
